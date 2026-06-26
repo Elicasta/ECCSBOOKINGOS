@@ -1,0 +1,20 @@
+{
+  "name": "ec-booking-os-v1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EC Creative Studios Booking OS: inquiry to quote to booking admin app.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node tests/domain.test.mjs",
+    "check": "npm run test && npm run build"
+  },
+  "dependencies": {
+    "next": "14.2.23",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {},
+  "type": "module"
+}
