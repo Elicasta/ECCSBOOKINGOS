@@ -1,20 +1,25 @@
 {
   "name": "ec-booking-os-v1",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": true,
   "description": "EC Creative Studios Booking OS: inquiry to quote to booking admin app.",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
     "test": "node tests/domain.test.mjs",
     "check": "npm run test && npm run build"
   },
   "dependencies": {
-    "next": "14.2.23",
+    "@vitejs/plugin-react": "4.3.4",
+    "vite": "5.4.11",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
   "devDependencies": {},
-  "type": "module"
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": "20.x"
+  }
 }
