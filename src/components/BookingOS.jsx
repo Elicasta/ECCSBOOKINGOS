@@ -32,18 +32,33 @@ const navItems = [
   ['settings', 'Settings'],
 ];
 
+function normalizeStore(candidate) {
+  const seed = seedData();
+  const source = candidate && typeof candidate === 'object' ? candidate : {};
+  return {
+    ...seed,
+    ...source,
+    contacts: Array.isArray(source.contacts) ? source.contacts : seed.contacts,
+    inquiries: Array.isArray(source.inquiries) ? source.inquiries : seed.inquiries,
+    quotes: Array.isArray(source.quotes) ? source.quotes : seed.quotes,
+    bookings: Array.isArray(source.bookings) ? source.bookings : seed.bookings,
+    contracts: Array.isArray(source.contracts) ? source.contracts : seed.contracts,
+    invoices: Array.isArray(source.invoices) ? source.invoices : seed.invoices,
+    appointments: Array.isArray(source.appointments) ? source.appointments : seed.appointments,
+    communications: Array.isArray(source.communications) ? source.communications : seed.communications,
+    activity: Array.isArray(source.activity) ? source.activity : seed.activity,
+    templates: Array.isArray(source.templates) && source.templates.length ? source.templates : defaultTemplates(),
+  };
+}
+
 function loadStore() {
   if (typeof window === 'undefined') return seedData();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return seedData();
-    const parsed = JSON.parse(raw);
-    return {
-      ...seedData(),
-      ...parsed,
-      templates: parsed.templates?.length ? parsed.templates : defaultTemplates(),
-    };
+    return normalizeStore(JSON.parse(raw));
   } catch {
+    window.localStorage.removeItem(STORAGE_KEY);
     return seedData();
   }
 }
@@ -56,14 +71,15 @@ function saveStore(store) {
 
 export default function BookingOS() {
   const [store, setStore] = useState(loadStore);
+  const safeStore = normalizeStore(store);
   const [active, setActive] = useState('dashboard');
-  const [selectedInquiryId, setSelectedInquiryId] = useState(store.inquiries[0]?.id || null);
-  const [selectedContactId, setSelectedContactId] = useState(store.contacts[0]?.id || null);
-  const [selectedBookingId, setSelectedBookingId] = useState(store.bookings[0]?.id || null);
-  const [selectedQuoteId, setSelectedQuoteId] = useState(store.quotes[0]?.id || null);
+  const [selectedInquiryId, setSelectedInquiryId] = useState(safeStore.inquiries[0]?.id || null);
+  const [selectedContactId, setSelectedContactId] = useState(safeStore.contacts[0]?.id || null);
+  const [selectedBookingId, setSelectedBookingId] = useState(safeStore.bookings[0]?.id || null);
+  const [selectedQuoteId, setSelectedQuoteId] = useState(safeStore.quotes[0]?.id || null);
   const [toast, setToast] = useState('');
 
-  useEffect(() => saveStore(store), [store]);
+  useEffect(() => saveStore(safeStore), [safeStore]);
 
   function flash(message) {
     setToast(message);
@@ -227,7 +243,7 @@ export default function BookingOS() {
     flash('Workspace reset.');
   }
 
-  const context = { store, active, setActive, selectedInquiryId, setSelectedInquiryId, selectedContactId, setSelectedContactId, selectedBookingId, setSelectedBookingId, selectedQuoteId, setSelectedQuoteId, createManualInquiry, updateInquiry, buildQuoteForInquiry, sendQuote, acceptQuote, updateBookingAsset, refreshBookingStatus, sendEmailLog, resetWorkspace };
+  const context = { store: safeStore, active, setActive, selectedInquiryId, setSelectedInquiryId, selectedContactId, setSelectedContactId, selectedBookingId, setSelectedBookingId, selectedQuoteId, setSelectedQuoteId, createManualInquiry, updateInquiry, buildQuoteForInquiry, sendQuote, acceptQuote, updateBookingAsset, refreshBookingStatus, sendEmailLog, resetWorkspace };
 
   return (
     <div className="shell">
